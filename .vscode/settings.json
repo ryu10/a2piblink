@@ -1,0 +1,6 @@
+{
+  "ca65.buildenv": "linux",
+  "ca65.cc65": "linux",
+  "ca65.testenv": "linux",
+  "ca65.vscodeenv": "linux"
+}
