@@ -8,37 +8,33 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd ${scriptDir}
 
 # project-specific params
-exeFile=ASMHELLO
-loadAddr=0x2000
-diskImage=asmhello.po
+buildDir=build
+srcDir=src
+srcFile=BlinkTest.bas
+exeFile=BLINKTEST
+diskImage=blinkTest.po
 
 # params
-buildDir=build
 acCmd=ac.sh
-# cwd=$( pwd )
 diskPath=${buildDir}/${diskImage}
-exePath=${buildDir}/${exeFile}
+srcPath=${srcDir}/${srcFile}
 
 
 # subtasks as functions
 function mk_build_dir(){
-  if [ ! -f ${buildDir}/build.ninja ]; then
+  if [ ! -d ${buildDir} ]; then
       mkdir -p ${buildDir}
-      pushd ${buildDir} &> /dev/null
-      cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=../../utils/cc65-toolchain-example/toolchains/cc65-toolchain.cmake ..
-      popd &> /dev/null
   fi
 }
 
 function build(){
   mk_build_dir
-  # cmake --build build -- "$@"
-  cmake --build ${buildDir} 
+  #cmake --build ${buildDir} 
 }
 
 function clean(){
   if [ -d ${buildDir} ]; then
-    cmake --build ${buildDir} -- "clean"
+    rm -rf ${diskPath}
   else
     echo Directory ${buildDir} does not exist. Do nothing.
   fi
@@ -46,17 +42,15 @@ function clean(){
 
 function writeDisk(){
   ${acCmd} -d ${diskPath} ${exeFile}
-# for CC65 programs
-#  ${acCmd} -as ${diskPath} ${exeFile} BIN ${loadAddr} < ${exePath} 
-# for CA65 asm program
-  ${acCmd} -p ${diskPath} ${exeFile} BIN ${loadAddr} < ${exePath} 
+# for BASIC program
+  ${acCmd} -bas ${diskPath} ${exeFile} < ${srcPath} 
 }
 
 function disk(){
   if [ ! -e ${diskPath} ]; then # no *.po image file, create one
     ${acCmd} -pro140 ${diskPath} NONAME
     writeDisk
-  elif [ ${exePath} -nt ${diskPath} ]; then # .po exists, and new exe was created
+  elif [ ${srcPath} -nt ${diskPath} ]; then # .po exists, and new exe was created
     writeDisk
   else
     echo ${diskImage} is newer than ${exeFile}. ${diskImage} is not updated. 
@@ -77,7 +71,7 @@ function all(){
 # special case : no args at all
 if [ $# -eq 0 ]; then
   all
-  popd  &> /dev/null # from scriptdir
+  popd &> /dev/null # from scriptdir
   exit 0
 fi
 
@@ -109,4 +103,4 @@ case $1 in
     ;;
 esac
 
-popd  &> /dev/null # from scriptDir
+popd &> /dev/null # from scriptDir

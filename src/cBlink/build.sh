@@ -3,38 +3,42 @@
 set -e
 
 # cd to scriptDir
-pushd . &> /dev/null
+pushd .  &> /dev/null
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd ${scriptDir}
 
 # project-specific params
-buildDir=build
-srcDir=src
-srcFile=helloTest.bas
-exeFile=HELLOTEST
-diskImage=basicTest.po
+exeFile=CBLINK
+loadAddr=0x0803 # loadAddr is not used with CC65 'AppleSingle' bin.
+diskImage=cblink.po
 
 # params
+buildDir=build
 acCmd=ac.sh
+# cwd=$( pwd )
 diskPath=${buildDir}/${diskImage}
-srcPath=${srcDir}/${srcFile}
+exePath=${buildDir}/${exeFile}
 
 
 # subtasks as functions
 function mk_build_dir(){
-  if [ ! -d ${buildDir} ]; then
+  if [ ! -f ${buildDir}/build.ninja ]; then
       mkdir -p ${buildDir}
+      pushd ${buildDir} &> /dev/null
+      cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=../../utils/cc65-toolchain-example/toolchains/cc65-toolchain.cmake ..
+      popd &> /dev/null
   fi
 }
 
 function build(){
   mk_build_dir
-  #cmake --build ${buildDir} 
+  # cmake --build build -- "$@"
+  cmake --build ${buildDir} 
 }
 
 function clean(){
   if [ -d ${buildDir} ]; then
-    rm -rf ${diskPath}
+    cmake --build ${buildDir} -- "clean"
   else
     echo Directory ${buildDir} does not exist. Do nothing.
   fi
@@ -42,15 +46,17 @@ function clean(){
 
 function writeDisk(){
   ${acCmd} -d ${diskPath} ${exeFile}
-# for BASIC program
-  ${acCmd} -bas ${diskPath} ${exeFile} < ${srcPath} 
+# for CC65 programs
+  ${acCmd} -as ${diskPath} ${exeFile} < ${exePath} 
+# for CA65 asm program
+#  ${acCmd} -p ${diskPath} ${exeFile} BIN ${loadAddr} < ${exePath} 
 }
 
 function disk(){
   if [ ! -e ${diskPath} ]; then # no *.po image file, create one
     ${acCmd} -pro140 ${diskPath} NONAME
     writeDisk
-  elif [ ${srcPath} -nt ${diskPath} ]; then # .po exists, and new exe was created
+  elif [ ${exePath} -nt ${diskPath} ]; then # .po exists, and new exe was created
     writeDisk
   else
     echo ${diskImage} is newer than ${exeFile}. ${diskImage} is not updated. 
@@ -71,7 +77,7 @@ function all(){
 # special case : no args at all
 if [ $# -eq 0 ]; then
   all
-  popd &> /dev/null # from scriptdir
+  popd  &> /dev/null # from scriptdir
   exit 0
 fi
 
@@ -103,4 +109,4 @@ case $1 in
     ;;
 esac
 
-popd &> /dev/null # from scriptDir
+popd  &> /dev/null # from scriptDir

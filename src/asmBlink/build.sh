@@ -3,14 +3,14 @@
 set -e
 
 # cd to scriptDir
-pushd .  &> /dev/null
+pushd . &> /dev/null
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd ${scriptDir}
 
 # project-specific params
-exeFile=CHELLO
-loadAddr=0x0803 # loadAddr is not used with CC65 'AppleSingle' bin.
-diskImage=chello.po
+exeFile=ASMBLINK
+loadAddr=0x2000
+diskImage=asmblink.po
 
 # params
 buildDir=build
@@ -47,9 +47,9 @@ function clean(){
 function writeDisk(){
   ${acCmd} -d ${diskPath} ${exeFile}
 # for CC65 programs
-  ${acCmd} -as ${diskPath} ${exeFile} < ${exePath} 
+#  ${acCmd} -as ${diskPath} ${exeFile} BIN ${loadAddr} < ${exePath} 
 # for CA65 asm program
-#  ${acCmd} -p ${diskPath} ${exeFile} BIN ${loadAddr} < ${exePath} 
+  ${acCmd} -p ${diskPath} ${exeFile} BIN ${loadAddr} < ${exePath} 
 }
 
 function disk(){
