@@ -53,3 +53,7 @@ Assume the LED is connected PB0. The following control sequence blinks the LED:
 * wait
 * V_PB = $FF (LED on)
 * Repeat the off/on steps
+
+## Timer Control
+
+
