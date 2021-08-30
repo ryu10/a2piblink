@@ -21,9 +21,9 @@ ENTRY:
         sta DDRB ; PB output
         ; Init VIA Timer1
         lda #0
-        sta ACR ; TMR1: one-shot; ShiftReg: disabled; PB7: unchanged.
+        sta ACR ; Timer 1: one-shot; ShiftReg: disabled; PB7: unchanged.
         lda #$7f
-        sta IER ; Disable all interrupts
+        sta IER ; Disable all IRQ triggers
         lda #16
         sta ITR ; Blink LED 16 times
 @L1:
@@ -47,9 +47,9 @@ WAIT1SEC:
 @L1:    lda #$ce
         sta T1L
         lda #$c7
-        sta T1H ; set TMR=0xc7ce (50ms) and start TM1
+        sta T1H ; set T1=0xc7ce (50ms) and start TIMER 1
 @L2:    lda IFR
-        and #$40 ; bit6=TM1 timeout
+        and #$40 ; bit6=TIMER 1 timeout
         beq @L2 
         dec W1ST
         bne @L1 ; TM1 (50ms) * 20 = 1 sec

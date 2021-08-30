@@ -56,4 +56,18 @@ Assume the LED is connected PB0. The following control sequence blinks the LED:
 
 ## Timer Control
 
+The timer (TM1) can count up to 65535 (0xffff) with ph2. Ph2 is the Apple II system clock speed 1.023MHz.
+
+Therefore, the period of TM1 is:
+
+65535 / (1.023 * 10^6) = 0.0641 sec ~ 64ms
+
+another setting is set TM1=51150 (0xc7ce). In this case, TM1 period is:
+
+51150 / (1.023 * 10^6) =0.050 sec = 50 ms
+
+Initialization of TM1 can be done as follows:
+
+* ACR = 0 (TM1 one-shot mode, shift register and PB7 are not used)
+* IER = 0x7f (Clear all interrupt triggers; we just poll the register)
 
