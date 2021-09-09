@@ -2,72 +2,61 @@
 
 Blink programs for a2mini VIA card 
 
-## IO Addresses
+## VIA Addresses.
 
 |Register|Address| Function |
 |--|--|--|
-| V_PB    | `$Cx00 (49152 + 256*x)` ||
-| V_PA    | `$Cx01 (49153 + 256*x)` ||
-| V_DDRB  | `$Cx02 (49154 + 256*x)` ||
-| V_DDRA  |	`$Cx03 (49155 + 256*x)` ||
-| V_T1L   | `$Cx04 (49156 + 256*x)` | timer|
-| V_T1H   | `$Cx05 (49157 + 256*x)` | timer|
-| V_ACR   | `$Cx0B (49163 + 256*x)` | timer ctr bits reg|
-| V_IFR   | `$Cx0D (49165 + 256*x)` | timer interrupt status reg|
-| V_IER   | `$Cx0E (49166 + 256*x)` | interrupt enable reg|
+| PB    | `$Cx00 (49152 + 256*x)` ||
+| PA    | `$Cx01 (49153 + 256*x)` ||
+| DDRB  | `$Cx02 (49154 + 256*x)` ||
+| DDRA  |	`$Cx03 (49155 + 256*x)` ||
+| T1L   | `$Cx04 (49156 + 256*x)` | timer|
+| T1H   | `$Cx05 (49157 + 256*x)` | timer|
+| ACR   | `$Cx0B (49163 + 256*x)` | timer ctr bits reg|
+| IFR   | `$Cx0D (49165 + 256*x)` | timer interrupt status reg|
+| IER   | `$Cx0E (49166 + 256*x)` | interrupt enable reg|
 
-Example: If A2mini VIA card is set to SLOT7:
+Examples (SLOT4 and SLOT7)
 
-|Register|Address|
-|--|--|
-| V_PB    | `$C700 (50944)` |
-| V_PA    | `$C701 (50945)` |
-| V_DDRB  | `$C702 (50946)` |
-| V_DDRA  |	`$C703 (50947)` |
-| V_T1L   | `$C704 (50948)` |
-| V_T1H   | `$C705 (50949)` |
-| V_ACR   | `$C70B (50955)` |
-| V_IFR   | `$C70D (50957)` |
-| V_IER   | `$C70E (50958)` |
-
-Example2: If A2mini VIA card is set to SLOT4:
-
-|Register|Address|
-|--|--|
-| V_PB    | `$C400 (50176)` |
-| V_PA    | `$C401 (50177)` |
-| V_DDRB  | `$C402 (50178)` |
-| V_DDRA  |	`$C403 (50179)` |
-| V_T1L   | `$C404 (50180)` |
-| V_T1H   | `$C405 (50181)` |
-| V_ACR   | `$C40B (50187)` |
-| V_IFR   | `$C40D (50189)` |
-| V_IER   | `$C40E (50190)` |
+|Register|SLOT4|SLOT7|
+|--|--|--|
+| PB    | `$C400 (50176)` | `$C700 (50944)` |
+| PA    | `$C401 (50177)` | `$C701 (50945)` |
+| DDRB  | `$C402 (50178)` | `$C702 (50946)` |
+| DDRA  | `$C403 (50179)` | `$C703 (50947)` |
+| T1L   | `$C404 (50180)` | `$C704 (50948)` |
+| T1H   | `$C405 (50181)` | `$C705 (50949)` |
+| ACR   | `$C40B (50187)` | `$C70B (50955)` |
+| IFR   | `$C40D (50189)` | `$C70D (50957)` |
+| IER   | `$C40E (50190)` | `$C70E (50958)` |
 
 ## Blink Control
 
 Assume the LED is connected PB0. The following control sequence blinks the LED:
 
-* V_DDRB = $FF (Bit '1' means 'output')
-* V_PB = $0 (LED off)
+* DDRB = $FF (Bit '1' means 'output')
+* PB = $0 (LED off)
 * wait
-* V_PB = $FF (LED on)
+* PB = $FF (LED on)
 * Repeat the off/on steps
 
 ## Timer Control
 
-The timer (TM1) can count up to 65535 (0xffff) with ph2. Ph2 is the Apple II system clock speed 1.023MHz.
+The timer (TM1) is driven by ph2 (1.023MHz), up to 65536 (oxffff) count.
 
-Therefore, the period of TM1 is:
+### Loaded valiue and time:
 
-65535 / (1.023 * 10^6) = 0.0641 sec ~ 64ms
+* 0xffff: 65535 / (1.023 * 10^6) = 0.0641 sec ~ 64ms
+* 0xc7ce: 51150 / (1.023 * 10^6) =0.050 sec = 50 ms
 
-another setting is set TM1=51150 (0xc7ce). In this case, TM1 period is:
+### Initialization of TM1 can be done as follows:
 
-51150 / (1.023 * 10^6) =0.050 sec = 50 ms
+1. Set ACR = 0 (TM1 one-shot mode, shift register and PB7 are not used)
+2. Set IER = 0x7f (Clear all interrupt triggers; we just poll the register)
 
-Initialization of TM1 can be done as follows:
+### Polling
 
-* ACR = 0 (TM1 one-shot mode, shift register and PB7 are not used)
-* IER = 0x7f (Clear all interrupt triggers; we just poll the register)
+Periodically check the value of IFR. If bit 6 is set, Timer 1 has reached zero. 
 
+### Resetting TImer 1
+Loading T1H resets bit 6.

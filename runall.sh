@@ -28,6 +28,8 @@ if [ $# -eq 0 ] || [ $1 = all ]; then
   a2setvd 2 `pwd`/build/asmblink.po
   echo "BRUN ASMBLINK,S2,D2" | a2term
 
+  sleep 16
+
   cd ..
   exit 0
 elif [ $1 = clean ]; then
