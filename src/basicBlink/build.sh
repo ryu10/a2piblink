@@ -11,8 +11,8 @@ cd ${scriptDir}
 buildDir=build
 srcDir=src
 srcFile=BlinkTest.bas
-exeFile=BLINKTEST
-diskImage=blinkTest.po
+exeFile=BASBLINK
+diskImage=basBlink.po
 
 # params
 acCmd=ac.sh

@@ -5,9 +5,9 @@ if [ $# -eq 0 ] || [ $1 = all ]; then
   cd src/basicBlink
   ./build.sh all
   # mount
-  a2setvd 2 `pwd`/build/blinkTest.po
+  a2setvd 2 `pwd`/build/basBlink.po
   # run
-  echo "RUN BLINKTEST,S2,D2" | a2term
+  echo "RUN BASBLINK,S2,D2" | a2term
 
   sleep 16
 
