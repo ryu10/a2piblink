@@ -59,4 +59,5 @@ The timer (TM1) is driven by ph2 (1.023MHz), up to 65536 (oxffff) count.
 Periodically check the value of IFR. If bit 6 is set, Timer 1 has reached zero. 
 
 ### Resetting TImer 1
-Loading T1H resets bit 6.
+
+Loading T1H resets bit 6 of IFR.
