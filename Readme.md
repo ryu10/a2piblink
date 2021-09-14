@@ -26,7 +26,7 @@ Note: after cloning this repository, run the following command to download the s
 
 ## Simple VIA Card
 
-This software uses a 6522VIA for controlling a blinking LED. [See this document](./viaCard.md).
+This software uses a 6522VIA to blink an LED. [See this document](./viaCard.md).
 
 ## Quick Run
 
