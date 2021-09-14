@@ -38,7 +38,7 @@ Examples (SLOT4 and SLOT7)
 | IFR   | `$C40D (50189)` | `$C70D (50957)` |
 | IER   | `$C40E (50190)` | `$C70E (50958)` |
 
-## Control Sequence
+## Control Sequences
 
 1. DDRB := 0xff ; Port B output
 2. ACR  := 0    ; Timer1=OneShot, ShiftReg=Disabled, PB7=Unaffected
