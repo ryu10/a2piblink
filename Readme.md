@@ -4,7 +4,7 @@
 
 ![VSCode remote](a2piblink.png)
 
-This repo, `a2piblink`, should be placed on a Raspberry Pi (3A/B+ recommended) connected to an [Apple II Pi](https://github.com/dschmenk/apple2pi) card. By setting up [VSCode Remote Development](https://code.visualstudio.com/docs/remote/remote-overview) on the Raspbery Pi, you can develop Apple II programs in Basic, C or Assembly language, from your modern OS PC (Win/Mac/Linux). C and Assembler prograsm are built with [cc65-toolchain-example](https://github.com/fo-fo/cc65-toolchain-example.git).
+Clone this repo, `a2piblink`, on a Raspberry Pi (3A+ or 3B+ recommended) connected to an [Apple II Pi](https://github.com/dschmenk/apple2pi) card. By setting up [VSCode Remote Development](https://code.visualstudio.com/docs/remote/remote-overview) on the Raspbery Pi, you can develop Apple II software in Basic, C and Assembly language, from your modern OS PC (Win/Mac/Linux) desktop. C and Assembler programs are built with [cc65-toolchain-example](https://github.com/fo-fo/cc65-toolchain-example.git).
 
 The sample programs in this repo blink an LED on a simple VIA card. It is assumed that the card is set in Slot 4 of the Apple IIe.
 
@@ -18,43 +18,19 @@ Install the following on the Raspberry Pi which is connected to the Apple II Pi 
 * [VSCode](https://code.visualstudio.com/download) [Remote Development](https://code.visualstudio.com/docs/remote/remote-overview)
 * A simple VIA 6522 card, details are described in the [next section](#Simple_VIA_Card)
 
+Note: after cloning this repository, run the following command to download the submodule:
+
+```git submodule update -i```
+
+(```git clone``` does not do this automatically)
+
 ## Simple VIA Card
 
-A simple VIA (6522) card can be made using the schematic below. Port B register is assigned to the lowest address in the card. PB0 is connected to the input of an OC Not gate (74ls05) and the output of the not gate is connected to a LED and a resistor.
-
-![Simple VIA schematic](simpleViaSch.png)
-
-By controlling Bit 0 of PB, you can blink the LED.
-
-The important VIA addresses are listed in the tables below.
-
-|Register|Address| Function |
-|--|--|--|
-| PB    | `$Cx00 (49152 + 256*x)` ||
-| PA    | `$Cx01 (49153 + 256*x)` ||
-| DDRB  | `$Cx02 (49154 + 256*x)` ||
-| DDRA  |	`$Cx03 (49155 + 256*x)` ||
-| T1L   | `$Cx04 (49156 + 256*x)` | timer|
-| T1H   | `$Cx05 (49157 + 256*x)` | timer|
-| ACR   | `$Cx0B (49163 + 256*x)` | timer ctr bits reg|
-| IFR   | `$Cx0D (49165 + 256*x)` | timer interrupt status reg|
-| IER   | `$Cx0E (49166 + 256*x)` | interrupt enable reg|
-
-Examples (SLOT4 and SLOT7)
-
-|Register|SLOT4|SLOT7|
-|--|--|--|
-| PB    | `$C400 (50176)` | `$C700 (50944)` |
-| PA    | `$C401 (50177)` | `$C701 (50945)` |
-| DDRB  | `$C402 (50178)` | `$C702 (50946)` |
-| DDRA  | `$C403 (50179)` | `$C703 (50947)` |
-| T1L   | `$C404 (50180)` | `$C704 (50948)` |
-| T1H   | `$C405 (50181)` | `$C705 (50949)` |
-| ACR   | `$C40B (50187)` | `$C70B (50955)` |
-| IFR   | `$C40D (50189)` | `$C70D (50957)` |
-| IER   | `$C40E (50190)` | `$C70E (50958)` |
+This software uses a 6522VIA for controlling a blinking LED. [See this document](./viaCard.md).
 
 ## Quick Run
+
+Open a terminal session on the Raspberry Pi and run:
 
 ```
 git clone https://github.com/ryu10/a2piblink.git
@@ -62,6 +38,8 @@ cd a2piblink
 ./runall.sh
 ./runall.sh cleanall
 ```
+
+Also you can open a separate ```a2term``` session on the Raspberry Pi.
 
 ## Source Directories
 
