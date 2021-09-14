@@ -1,6 +1,6 @@
 # Simple VIA Card
 
-A simple VIA (6522) card can be constructed using the schematic below. 
+A simple VIA (6522) card for the Apple II. It can be built using the schematic shown below.
 
 Port B register is assigned to the lowest address in the card. PB0 controls an OC Not gate (74ls05) whose output is connected to an LED and a resistor in series.
 
@@ -10,14 +10,14 @@ Port B register is assigned to the lowest address in the card. PB0 controls an O
 
 ## VIA Ports and Registers
 
-By controlling the bit- 0 of PB, you can blink the LED. The important VIA addresses are listed in the tables below.
+By controlling bit 0 of PB, you can blink the LED. The VIA addresses are listed in the tables below.
 
 |Register|Address| Function |
 |--|--|--|
 | PB    | `$Cx00 (49152 + 256*x)` ||
 | PA    | `$Cx01 (49153 + 256*x)` ||
-| DDRB  | `$Cx02 (49154 + 256*x)` ||
-| DDRA  |	`$Cx03 (49155 + 256*x)` ||
+| DDRB  | `$Cx02 (49154 + 256*x)` | PB direction |
+| DDRA  |	`$Cx03 (49155 + 256*x)` | PA direction |
 | T1L   | `$Cx04 (49156 + 256*x)` | timer|
 | T1H   | `$Cx05 (49157 + 256*x)` | timer|
 | ACR   | `$Cx0B (49163 + 256*x)` | timer ctr bits reg|
