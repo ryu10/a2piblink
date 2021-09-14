@@ -14,15 +14,15 @@ By controlling bit 0 of PB, you can blink the LED. The VIA addresses are listed 
 
 |Register|Address| Function |
 |--|--|--|
-| PB    | `$Cx00 (49152 + 256*x)` ||
-| PA    | `$Cx01 (49153 + 256*x)` ||
-| DDRB  | `$Cx02 (49154 + 256*x)` | PB direction |
-| DDRA  |	`$Cx03 (49155 + 256*x)` | PA direction |
-| T1L   | `$Cx04 (49156 + 256*x)` | timer|
-| T1H   | `$Cx05 (49157 + 256*x)` | timer|
-| ACR   | `$Cx0B (49163 + 256*x)` | timer ctr bits reg|
-| IFR   | `$Cx0D (49165 + 256*x)` | timer interrupt status reg|
-| IER   | `$Cx0E (49166 + 256*x)` | interrupt enable reg|
+| PB    | `$Cx00 (49152 + 256*x)` | port B |
+| PA    | `$Cx01 (49153 + 256*x)` | port A |
+| DDRB  | `$Cx02 (49154 + 256*x)` | PB data direction |
+| DDRA  |	`$Cx03 (49155 + 256*x)` | PA data direction |
+| T1L   | `$Cx04 (49156 + 256*x)` | timer counter |
+| T1H   | `$Cx05 (49157 + 256*x)` | timer counter |
+| ACR   | `$Cx0B (49163 + 256*x)` | aux control |
+| IFR   | `$Cx0D (49165 + 256*x)` | interrupt flag |
+| IER   | `$Cx0E (49166 + 256*x)` | interrupt  enable |
 
 Examples (SLOT4 and SLOT7)
 
