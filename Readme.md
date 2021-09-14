@@ -4,7 +4,7 @@
 
 ![VSCode remote](a2piblink.png)
 
-Clone this repo, `a2piblink`, on a Raspberry Pi (3A+ or 3B+ recommended) connected to an [Apple II Pi](https://github.com/dschmenk/apple2pi) card. By setting up [VSCode Remote Development](https://code.visualstudio.com/docs/remote/remote-overview) on the Raspbery Pi, you can develop Apple II software in Basic, C and Assembly language, from your modern OS PC (Win/Mac/Linux) desktop. C and Assembler programs are built with [cc65-toolchain-example](https://github.com/fo-fo/cc65-toolchain-example.git).
+Clone this repo, `a2piblink`, on a Raspberry Pi (3A+ or 3B+ recommended) connected to an [Apple II Pi](https://github.com/dschmenk/apple2pi) card. By setting up [VSCode Remote Development](https://code.visualstudio.com/docs/remote/remote-overview) on the Raspbery Pi, you can develop Apple II software in Basic, C and Assembly language, on your desktop of modern OS computers (Win/Mac/Linux). C and Assembler programs are built with [cc65-toolchain-example](https://github.com/fo-fo/cc65-toolchain-example.git).
 
 The sample programs in this repo blink an LED on a simple VIA card. It is assumed that the card is set in Slot 4 of the Apple IIe.
 
