@@ -48,3 +48,10 @@ Examples (SLOT4 and SLOT7)
 6. PB   := 0; LED off
 7. (wait for 500ms)
 8. Repeat Steps 4 through 7 for 16 times; 16 blinks in approx. 16 seconds.
+
+### wait for 500ms
+
+1. T1L := 0xce ; init T1 with 0xc7ce ; ~50ms with Apple II Ph2 (1.024MHz)
+2. T1H := 0xc7 ; Once T1H is writtern, one-shot Timer 1 starts
+3. Wait until bit 6 of IFR is set (Timer1 Timeout)
+4. Repeat Steps 1 through 3 for 10 times (50ms x 10 = 500ms)
