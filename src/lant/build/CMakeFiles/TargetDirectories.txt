@@ -1,3 +1,0 @@
-/home/pi/github/a2piblink/src/lant/build/CMakeFiles/rebuild_cache.dir
-/home/pi/github/a2piblink/src/lant/build/CMakeFiles/a2pi_lant.dir
-/home/pi/github/a2piblink/src/lant/build/CMakeFiles/edit_cache.dir

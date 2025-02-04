@@ -6,7 +6,7 @@
 # It is included in the main 'build.ninja'.
 
 # =============================================================================
-# Project: a2pi_lant_project
+# Project: a2pi_plot1_project
 # Configuration: 
 # =============================================================================
 # =============================================================================
@@ -22,7 +22,7 @@ rule CUSTOM_COMMAND
 #############################################
 # Rule for compiling ASM files.
 
-rule ASM_COMPILER__a2pi_lant
+rule ASM_COMPILER__a2pi_plot1
   depfile = $DEP_FILE
   deps = gcc
   command = /usr/local/bin/cl65 $DEFINES $INCLUDES $FLAGS --create-dep $DEP_FILE -o $out -c $in
@@ -32,7 +32,7 @@ rule ASM_COMPILER__a2pi_lant
 #############################################
 # Rule for linking ASM executable.
 
-rule ASM_EXECUTABLE_LINKER__a2pi_lant
+rule ASM_EXECUTABLE_LINKER__a2pi_plot1
   command = $PRE_LINK && /usr/local/bin/cl65 $FLAGS  $LINK_FLAGS $in  -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking ASM executable $TARGET_FILE
   restat = $RESTAT
@@ -42,7 +42,7 @@ rule ASM_EXECUTABLE_LINKER__a2pi_lant
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /usr/bin/cmake -S/home/pi/github/a2piblink/src/lant -B/home/pi/github/a2piblink/src/lant/build
+  command = /usr/bin/cmake -S/home/pi/github/a2piblink/src/plot1 -B/home/pi/github/a2piblink/src/plot1/build
   description = Re-running CMake...
   generator = 1
 

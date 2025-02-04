@@ -8,9 +8,9 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd ${scriptDir}
 
 # project-specific params
-exeFile=lant
+exeFile=plot1
 loadAddr=0x6000
-diskImage=lant.po
+diskImage=plot1.po
 
 # params
 buildDir=build
