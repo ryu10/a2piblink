@@ -13,6 +13,8 @@ WAIT = $fca8
 ; constants
 BITMAP_SIZE = $1b00
 MAX_ANTS = 3
+X_MAX = 280
+Y_MAX = 160
 ;
 ; zpg locs
 ; BC = $1D ; zpg loc $1D, $1E
@@ -50,7 +52,7 @@ ENTRY:
         sta ANTS +ay_off
         lda #2
         sta ANTS +aori_off
-        lda #3 ; white
+        lda #0 ; black
         sta ANTS + updcol_off
         ; ant1 at (50, 100), ori=1 (right)
         lda #50   
@@ -61,7 +63,7 @@ ENTRY:
         sta ANTS+.sizeof(Ant) +ay_off
         lda #1
         sta ANTS+.sizeof(Ant) +aori_off
-        lda #3 ; white
+        lda #0 ; black
         sta ANTS+.sizeof(Ant) +updcol_off
         ; ant2 at (150, 100), ori=3 (left)
         lda #150   
@@ -72,17 +74,193 @@ ENTRY:
         sta ANTS+.sizeof(Ant)*2 +ay_off
         lda #3
         sta ANTS+.sizeof(Ant)*2 +aori_off
-        lda #3 ; white
+        lda #0 ; black
         sta ANTS+.sizeof(Ant)*2 +updcol_off
-; test  plot
-TESTMAIN:
+;
+MAINLOOP:
+        jsr UPDANTS
+        jsr UPDSCREEN
+        jmp MAINLOOP
+        rts
+;
+UPDANTS:
         lda #MAX_ANTS
         sta CNTR
         lda #<ANTS
         sta FG    ; zpg FG = ANT Base address
         lda #>ANTS
         sta FG+1
-MAIN0:  ldy #updcol_off ; load col -> COLOR
+UA0:    
+        ; move forward
+        ldy #aori_off ; current orientation
+        lda (FG),y
+        cmp #0 ; up?
+        bne UA_RT
+        ; move up
+        ldy #ay_off
+        lda (FG),y
+        tax
+        dex
+        cpx #$FF
+        bne UA_UP1 ; -1?
+        ldx #Y_MAX-1 ; wrap
+UA_UP1: txa
+        sta (FG),y
+        jmp UA_ORI ; done move up
+UA_RT:  cmp #1 ; right?
+        bne UA_DN
+        ; move right
+        ldy #ax_off
+        lda (FG),y
+        sta DE
+        iny
+        lda (FG),y
+        sta DE+1
+        lda DE
+        clc          ; inc ant x 
+        adc #1
+        sta DE
+        lda DE+1
+        adc #0
+        sta DE+1
+        cmp #>X_MAX
+        bne UA_RT1
+        lda DE
+        cmp #<X_MAX
+        bne UA_RT1
+        ; reached X_MAX, wrap
+        lda #0
+        sta DE
+        sta DE+1
+UA_RT1: ldy #ax_off ; save ant x
+        lda DE
+        sta (FG),y
+        iny
+        lda DE+1
+        sta (FG),y
+        jmp UA_ORI  ; done move right
+UA_DN:  cmp #2 ; down?
+        bne UA_LF
+        ; move down
+        ldy #ay_off
+        lda (FG),y
+        tax
+        inx
+        cpx #Y_MAX
+        bne UA_DN1
+        ldx #0  ; wrap
+UA_DN1: txa 
+        sta (FG),y
+        jmp UA_ORI ; done move down
+UA_LF:  ; move left
+        ldy #ax_off
+        lda (FG),y
+        sta DE
+        iny
+        lda (FG),y
+        sta DE+1
+        lda DE
+        sec
+        sbc #1
+        sta DE
+        lda DE+1
+        sbc #0
+        sta DE+1
+        cmp #$FF
+        bne UA_LF1
+        lda DE
+        cmp #$FF
+        bne UA_LF1
+        lda #<(X_MAX-1)  ; -1, wrap
+        sta DE
+        lda #>(X_MAX-1)
+        sta DE+1
+UA_LF1: ldy #ax_off
+        lda DE
+        sta (FG),y
+        iny
+        lda DE+1
+        sta (FG),y  ; done move left
+UA_ORI: ; get current location
+        ldy #ax_off    ; load <ax -> x
+        lda (FG),y
+        tax
+        iny            ; load >ax -> BWORK
+        lda (FG),y
+        sta BWORK
+        ldy #ay_off    ; load ay -> a
+        lda (FG),y
+        ldy BWORK      ; >ax -> y
+        jsr COOR2OFF   ; offset -> BC, bitloc -> Acc
+        ; get current bit
+        tax            ; generate mask
+        lda #1
+UA1:    cpx #0         ; shift mask
+        beq UA2
+        asl
+        dex
+        jmp UA1
+UA2:    sta BWORK      ; save mask to BWORK
+        clc            ; calc bitmap adrs -> BC
+        lda #<BITMAP
+        adc BC
+        sta BC
+        lda #>BITMAP
+        adc BC+1
+        sta BC+1
+        ldy #0
+        lda (BC),y     ; load current byte from bitmap
+        and BWORK ; bit test (black or white)
+        beq UA_BLACK
+UA_WHITE:      
+        ; invert to blk
+        ldy #updcol_off
+        lda #0 
+        sta (FG),y
+        ; white - turn right
+        ldy #aori_off
+        lda (FG),y
+        clc
+        adc #1
+        cmp #4 ; left to up?
+        bne UA3 
+        lda #0 ; up
+UA3:    sta (FG),y
+        jmp UA5   ; UA_WHITE done
+UA_BLACK:  
+        ; invert to white
+        ldy #updcol_off
+        lda #3
+        sta (FG),y
+        ; black - turn left
+        ldy #aori_off
+        lda (FG),y
+        sec
+        sbc #1
+        bpl UA4 ; up to left?
+        lda #3 ; left
+UA4:    sta (FG),y  ; UA_BLACK done
+UA5:    ; repeat for # of ants
+        clc
+        lda FG
+        adc #.sizeof(Ant)
+        sta FG
+        lda FG+1
+        adc #0
+        sta FG+1
+        dec CNTR
+        beq UA6
+        jmp UA0
+UA6:    rts
+;
+UPDSCREEN:
+        lda #MAX_ANTS
+        sta CNTR
+        lda #<ANTS
+        sta FG    ; zpg FG = ANT Base address
+        lda #>ANTS
+        sta FG+1
+US0:    ldy #updcol_off ; load col -> COLOR
         lda (FG),y
         sta COLOR
         ldy #ax_off    ; load <ax -> x
@@ -103,7 +281,7 @@ MAIN0:  ldy #updcol_off ; load col -> COLOR
         adc #0
         sta FG+1
         dec CNTR
-        bne MAIN0
+        bne US0
         rts
 ; plot at (yx, acc) in BITMAP and hgr vram
 PLOTMAP:
